@@ -16,7 +16,7 @@ OSC::~OSC()
 }
 
 void OSC::_ready() {
-    UtilityFunctions::print("hello from OSC");
+    // UtilityFunctions::print("OSC::_ready()");
 }
 
 void OSC::_process(double delta) {
