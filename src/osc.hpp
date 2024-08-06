@@ -1,7 +1,7 @@
 #pragma once
 
 #include <godot_cpp/classes/node.hpp>
-#include <godot_cpp/core/class_db.hpp>
+// #include <godot_cpp/core/class_db.hpp>
 
 namespace godot {
 
@@ -16,6 +16,7 @@ public:
     OSC();
     ~OSC();
 
+    // void _init();
     void _ready() override;
     void _process(double delta) override;
 };
