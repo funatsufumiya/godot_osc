@@ -1,6 +1,8 @@
 # godot_osc
 
-WIP
+***WIP***
+
+OSC addon for Godot 4.2.2
 
 ## Build and Run
 

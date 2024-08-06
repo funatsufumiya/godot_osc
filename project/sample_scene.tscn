@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://cbyrticosbwf8"]
+
+[node name="SampleScene" type="Node2D"]
+
+[node name="OSC" type="OSC" parent="."]
