@@ -19,3 +19,8 @@
 
 log.txt
 *.log
+
+project/addons/osc/bin/*
+*.dll
+*.exp
+*.lib
