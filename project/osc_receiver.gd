@@ -11,7 +11,7 @@ extends Node
 func _ready():
 	# osc.init(osc_in_port, osc_out_port, host_ip) # inPort, outPort, outIP
 
-	add_child(osc)	
+	add_child(osc)
 
 	# Message input Handler 
 	osc.onMessage("/test", func(msg:OSCMessage):

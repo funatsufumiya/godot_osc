@@ -78,20 +78,21 @@ void OSC::_process(double delta) {
         Ref<PacketPeerUDP> peer = server->take_connection();
         PackedByteArray packet = peer->get_packet();
 
+        // UtilityFunctions::print("[debug] OSC packet received: " + packet.get_string_from_utf8());
+
         std::shared_ptr<OSCMessage> msg = std::make_shared<OSCMessage>();
         msg->init(packet);
         
         if (!msg->isValid()) {
+            // UtilityFunctions::print("[debug] OSC message is invalid");
             return;
         }
         if (messageHandlers.has("*")) {
             Array empty = Array();
             Array arr = messageHandlers.get("*", empty);
-            // for (Callable handler : arr) {
-            //     handler.call(msg);
-            // }
 
             for (int i = 0; i < arr.size(); i++) {
+                // UtilityFunctions::print("Calling handler in *");
                 Callable handler = arr[i];
                 handler.call(msg.get());
             }
@@ -100,6 +101,7 @@ void OSC::_process(double delta) {
             Array arr = messageHandlers[msg->address()];
 
             for (int i = 0; i < arr.size(); i++) {
+                // UtilityFunctions::print("Calling handler in address: " + msg->address());
                 Callable handler = arr[i];
                 handler.call(msg.get());
             }
