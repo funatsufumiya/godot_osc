@@ -24,7 +24,7 @@ public:
     OSC();
     ~OSC();
 
-    // void _init();
+    void _init(int inPort, int outPort, String outIP);
     void _ready() override;
     void _process(double delta) override;
 

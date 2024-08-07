@@ -1,5 +1,8 @@
-[gd_scene format=3 uid="uid://cbyrticosbwf8"]
+[gd_scene load_steps=2 format=3 uid="uid://cbyrticosbwf8"]
+
+[ext_resource type="Script" path="res://osc_receiver.gd" id="1_ohc3t"]
 
 [node name="SampleScene" type="Node2D"]
 
-[node name="OSC" type="OSC" parent="."]
+[node name="OSCReceiver" type="Node" parent="."]
+script = ExtResource("1_ohc3t")

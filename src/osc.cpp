@@ -6,7 +6,7 @@
 using namespace godot;
 
 void OSC::_bind_methods() {
-    // ClassDB::bind_method(D_METHOD("_init"), &OSC::_init);
+    ClassDB::bind_method(D_METHOD("_init", "inPort", "outPort", "outIP"), &OSC::_init);
     ClassDB::bind_method(D_METHOD("send", "buffer"), &OSC::send);
     ClassDB::bind_method(D_METHOD("stop"), &OSC::stop);
     ClassDB::bind_method(D_METHOD("onMessage", "address", "callback"), &OSC::onMessage);
@@ -19,6 +19,12 @@ OSC::OSC()
 
 OSC::~OSC()
 {
+}
+
+void OSC::_init(int inPort, int outPort, String outIP) {
+    _inPort = inPort;
+    _outPort = outPort;
+    _outIP = outIP;
 }
 
 void OSC::_ready() {
