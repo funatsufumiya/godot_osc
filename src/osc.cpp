@@ -26,26 +26,8 @@ OSC::~OSC()
 {
 }
 
-// void OSC::_init(int inPort, int outPort, String outIP) {
-//     _inPort = inPort;
-//     _outPort = outPort;
-//     _outIP = outIP;
-// }
-
-// OSC OSC::create(int inPort, int outPort, String outIP) {
-//     // UtilityFunctions::print("OSC::create");
-//     OSC osc;
-//     osc._inPort = inPort;
-//     osc._outPort = outPort;
-//     osc._outIP = outIP;
-
-//     return osc;
-// }
-
 OSC* OSC::new_from(int inPort, int outPort, String outIP) {
     // UtilityFunctions::print("OSC::new_from");
-    // OSC* osc = new OSC();
-    // osc.instantiate();
 
     OSC* osc = memnew(OSC);
     osc->init(inPort, outPort, outIP);
@@ -59,9 +41,6 @@ void OSC::init(int inPort, int outPort, String outIP) {
     _inPort = inPort;
     _outPort = outPort;
     _outIP = outIP;
-
-	// server = UDPServer.new()
-	// server.listen(inPort)
 
     server = memnew(UDPServer);
     server->listen(inPort);
