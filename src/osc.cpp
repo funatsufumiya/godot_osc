@@ -79,9 +79,9 @@ void OSC::_process(double delta) {
         PackedByteArray packet = peer->get_packet();
         // OSCMessage msg(packet);
         std::shared_ptr msg = std::make_shared<OSCMessage>();
-        msg.init(packet);
+        msg->init(packet);
         
-        if (!msg.isValid) {
+        if (!msg->isValid()) {
             return;
         }
         if (messageHandlers.has("*")) {

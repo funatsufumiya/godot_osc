@@ -228,6 +228,9 @@ public:
     Array _myArguments;
     Array _myData;
     bool _isValid = false;
+    bool isArray = false;
+    Variant _myArrayType = 0x00;
+    // char _myArrayType = 0x00;
 
     OSCMessage();
     ~OSCMessage();

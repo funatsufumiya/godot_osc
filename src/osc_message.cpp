@@ -417,32 +417,30 @@ Array OSCMessage::_parseArguments(PackedByteArray theBytes) {
                 isArray = false;
             }
         }
-        switch (_myTypetag[myTagIndex]) {
-            case 0x69: // 'i'.to_ascii_buffer()[0]: // Interger
-                myArguments[myTagIndex] = theBytes.slice(myIndex, myIndex + 4);
-                myArguments[myTagIndex].reverse();
-                myArguments[myTagIndex] = myArguments[myTagIndex].to_int32_array()[0];
-                myIndex += 4;
-                break;
-            case 0x66: // 'f'.to_ascii_buffer()[0]: // Float
-                myArguments[myTagIndex] = theBytes.slice(myIndex, myIndex + 4);
-                myArguments[myTagIndex].reverse();
-                myArguments[myTagIndex] = myArguments[myTagIndex].to_float32_array()[0];
-                myIndex += 4;
-                break;
-            case 0x73: // 's'.to_ascii_buffer()[0]: // String
-                myArguments[myTagIndex] = theBytes.slice(myIndex).get_string_from_utf8();
-                int newIndex = myIndex + myArguments[myTagIndex].length();
-                myIndex = newIndex + _align(newIndex);
-                break;
-            case 0x62: // 'b'.to_ascii_buffer()[0]: // Blob
-                int myLen = theBytes.slice(myIndex, myIndex + 4);
-                myLen.reverse();
-                myLen = myLen.to_int32_array()[0];
-                myIndex += 4;
-                myArguments[myTagIndex] = theBytes.slice(myIndex, myIndex + myLen);
-                myIndex += myLen + (_align(myLen) % 4);
-                break;
+
+        Variant v = _myTypetag[myTagIndex];
+        char t = (uint8_t)v;
+        if (t == 0x69) { // 'i'.to_ascii_buffer()[0]: // Interger
+            PackedByteArray data = theBytes.slice(myIndex, myIndex + 4);
+            data.reverse();
+            myArguments[myTagIndex] = data.to_int32_array()[0];
+            myIndex += 4;
+        } else if (t == 0x66) { // 'f'.to_ascii_buffer()[0]: // Float
+            PackedByteArray data = theBytes.slice(myIndex, myIndex + 4);
+            data.reverse();
+            myArguments[myTagIndex] = data.to_float32_array()[0];
+            myIndex += 4;
+        } else if (t == 0x73) { // 's'.to_ascii_buffer()[0]: // String
+            myArguments[myTagIndex] = theBytes.slice(myIndex).get_string_from_utf8();
+            int newIndex = myIndex + myArguments[myTagIndex].length();
+            myIndex = newIndex + _align(newIndex);
+        } else if (t == 0x62) { // 'b'.to_ascii_buffer()[0]: // Blob
+            int myLen = theBytes.slice(myIndex, myIndex + 4);
+            myLen.reverse();
+            myLen = myLen.to_int32_array()[0];
+            myIndex += 4;
+            myArguments[myTagIndex] = theBytes.slice(myIndex, myIndex + myLen);
+            myIndex += myLen + (_align(myLen) % 4);
         }
         myTagIndex += 1;
     }
