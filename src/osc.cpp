@@ -78,6 +78,8 @@ void OSC::_process(double delta) {
         Ref<PacketPeerUDP> peer = server->take_connection();
         PackedByteArray packet = peer->get_packet();
         // OSCMessage msg(packet);
+
+        // TODO: stackにしたい
         std::shared_ptr msg = std::make_shared<OSCMessage>();
         msg->init(packet);
         
