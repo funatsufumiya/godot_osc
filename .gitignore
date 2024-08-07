@@ -24,3 +24,5 @@ project/addons/osc/bin/*
 *.dll
 *.exp
 *.lib
+
+*.tmp
