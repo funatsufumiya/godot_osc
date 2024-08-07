@@ -18,6 +18,7 @@ public:
     // std::unique_ptr<UDPServer> server;
     UDPServer* server;
     Dictionary messageHandlers;
+    // std::map<String, Vector<Callable>> messageHandlers;
     String _outIP = "127.0.0.1";
     int _inPort = 9999;
     int _outPort = 8888;

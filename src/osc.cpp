@@ -108,4 +108,9 @@ void OSC::stop() {
 
 void OSC::onMessage(String address, Callable callback) {
     // UtilityFunctions::print("OSC::onMessage");
+
+    if (!messageHandlers.has(address)) {
+        messageHandlers[address] = Array();
+    }
+    messageHandlers[address].push_back(callback);
 }

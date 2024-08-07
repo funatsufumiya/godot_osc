@@ -432,7 +432,7 @@ Array OSCMessage::_parseArguments(PackedByteArray theBytes) {
             myIndex += 4;
         } else if (t == 0x73) { // 's'.to_ascii_buffer()[0]: // String
             myArguments[myTagIndex] = theBytes.slice(myIndex).get_string_from_utf8();
-            int newIndex = myIndex + myArguments[myTagIndex].length();
+            int newIndex = myIndex + myArguments[myTagIndex].size();
             myIndex = newIndex + _align(newIndex);
         } else if (t == 0x62) { // 'b'.to_ascii_buffer()[0]: // Blob
             int myLen = theBytes.slice(myIndex, myIndex + 4);
