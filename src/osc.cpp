@@ -61,6 +61,9 @@ void OSC::_process(double delta) {
 
         std::shared_ptr<OSCMessage> msg = std::make_shared<OSCMessage>();
         msg->init(packet);
+
+        // UtilityFunctions::print("OSC message received: " + msg->address());
+        // UtilityFunctions::print("OSC message content: " + msg->toString());
         
         if (!msg->isValid()) {
             // UtilityFunctions::print("[debug] OSC message is invalid");
