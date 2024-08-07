@@ -77,10 +77,8 @@ void OSC::_process(double delta) {
     if (server->is_connection_available()) {
         Ref<PacketPeerUDP> peer = server->take_connection();
         PackedByteArray packet = peer->get_packet();
-        // OSCMessage msg(packet);
 
-        // TODO: stackにしたい
-        std::shared_ptr msg = std::make_shared<OSCMessage>();
+        std::shared_ptr<OSCMessage> msg = std::make_shared<OSCMessage>();
         msg->init(packet);
         
         if (!msg->isValid()) {
@@ -95,19 +93,15 @@ void OSC::_process(double delta) {
 
             for (int i = 0; i < arr.size(); i++) {
                 Callable handler = arr[i];
-                handler.call(*msg);
+                handler.call(msg.get());
             }
         }
         if (messageHandlers.has(msg->address())) {
-            // Array empty = Array();
             Array arr = messageHandlers[msg->address()];
-            // for (Callable handler : arr) {
-            //     handler.call(msg);
-            // }
 
             for (int i = 0; i < arr.size(); i++) {
                 Callable handler = arr[i];
-                handler.call(*msg);
+                handler.call(msg.get());
             }
         }
     }

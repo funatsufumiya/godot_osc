@@ -14,24 +14,24 @@ func _ready():
 	add_child(osc)	
 
 	# Message input Handler 
-	# osc.onMessage("/test", func(msg:OSCMessage):
-	# 	print("[OSC] /test")
-	# 	print(msg.toString())
-	# 	# match msg.getValues() :
-	# 	# 	[var x, var y] when x is float and y is float:
-	# 	# 		# print("X: ", x, ", Y: ", y)
-	# 	# 		if mover:
-	# 	# 			mover.osc_move_message_received.emit(x, y)
-	# 	# 	[var x, var y, var s] when x is float and y is float:
-	# 	# 		# print("X: ", x, ", Y: ", y)
-	# 	# 		if mover:
-	# 	# 			mover.osc_move_message_received.emit(x, y)
-	# )
+	osc.onMessage("/test", func(msg:OSCMessage):
+		print("[OSC] /test")
+		print(msg.toString())
+		# match msg.getValues() :
+		# 	[var x, var y] when x is float and y is float:
+		# 		# print("X: ", x, ", Y: ", y)
+		# 		if mover:
+		# 			mover.osc_move_message_received.emit(x, y)
+		# 	[var x, var y, var s] when x is float and y is float:
+		# 		# print("X: ", x, ", Y: ", y)
+		# 		if mover:
+		# 			mover.osc_move_message_received.emit(x, y)
+	)
 
-	# osc.onMessage("/hello", func(_msg:OSCMessage):
-	# 	print("[OSC] /hello")
-	# 	print(msg.toString())
-	# )
+	osc.onMessage("/hello", func(msg:OSCMessage):
+		print("[OSC] /hello")
+		print(msg.toString())
+	)
 
 	# Message output
 	# var msg:OSCMessage = OSCMessage.new("/address")
