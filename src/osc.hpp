@@ -15,7 +15,8 @@ protected:
 
 public:
 
-    std::unique_ptr<UDPServer> server;
+    // std::unique_ptr<UDPServer> server;
+    UDPServer* server;
     Dictionary messageHandlers;
     String _outIP = "127.0.0.1";
     int _inPort = 9999;

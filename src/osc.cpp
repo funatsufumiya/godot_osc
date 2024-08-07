@@ -57,6 +57,13 @@ void OSC::init(int inPort, int outPort, String outIP) {
     _inPort = inPort;
     _outPort = outPort;
     _outIP = outIP;
+
+	// server = UDPServer.new()
+	// server.listen(inPort)
+
+    server = memnew(UDPServer);
+    server->listen(inPort);
+    UtilityFunctions::print("OSC UDP server listening on port: " + String::num_int64(inPort));
 }
 
 void OSC::_ready() {
@@ -64,6 +71,28 @@ void OSC::_ready() {
 }
 
 void OSC::_process(double delta) {
+    server->poll(); // Important!
+    if (server->is_connection_available()) {
+        PacketPeerUDP* peer = server->take_connection();
+        PackedByteArray packet = peer->get_packet();
+        // OSCMessage msg(packet);
+        std::shared_ptr msg = std::make_shared<OSCMessage>();
+        msg.init(packet);
+        
+        if (!msg.isValid) {
+            return;
+        }
+        if (messageHandlers.has("*")) {
+            for (Callable handler : messageHandlers.get("*")) {
+                handler.call(msg);
+            }
+        }
+        if (messageHandlers.has(msg.address)) {
+            for (Callable handler : messageHandlers[msg.address]) {
+                handler.call(msg);
+            }
+        }
+    }
 }
 
 void OSC::send(PackedByteArray buffer) {
@@ -71,7 +100,8 @@ void OSC::send(PackedByteArray buffer) {
 }
 
 void OSC::stop() {
-    // UtilityFunctions::print("OSC::stop");
+    server->stop();
+    UtilityFunctions::print("OSC UDP server stopped");
 }
 
 void OSC::onMessage(String address, Callable callback) {
