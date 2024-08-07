@@ -24,7 +24,9 @@ public:
     OSC();
     ~OSC();
 
-    void _init(int inPort, int outPort, String outIP);
+    // void _init(int inPort, int outPort, String outIP);
+    // static OSC create(int inPort, int outPort, String outIP);
+    void init(int inPort, int outPort, String outIP);
     void _ready() override;
     void _process(double delta) override;
 
