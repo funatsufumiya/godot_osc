@@ -85,13 +85,27 @@ void OSC::_process(double delta) {
             return;
         }
         if (messageHandlers.has("*")) {
-            for (Callable handler : messageHandlers.get("*")) {
-                handler.call(msg);
+            Array empty = Array();
+            Array arr = messageHandlers.get("*", empty);
+            // for (Callable handler : arr) {
+            //     handler.call(msg);
+            // }
+
+            for (int i = 0; i < arr.size(); i++) {
+                Callable handler = arr[i];
+                handler.call(*msg);
             }
         }
-        if (messageHandlers.has(msg.address)) {
-            for (Callable handler : messageHandlers[msg.address]) {
-                handler.call(msg);
+        if (messageHandlers.has(msg->address())) {
+            // Array empty = Array();
+            Array arr = messageHandlers[msg->address()];
+            // for (Callable handler : arr) {
+            //     handler.call(msg);
+            // }
+
+            for (int i = 0; i < arr.size(); i++) {
+                Callable handler = arr[i];
+                handler.call(*msg);
             }
         }
     }
@@ -112,5 +126,5 @@ void OSC::onMessage(String address, Callable callback) {
     if (!messageHandlers.has(address)) {
         messageHandlers[address] = Array();
     }
-    messageHandlers[address].push_back(callback);
+    ((Array)messageHandlers[address]).push_back(callback);
 }

@@ -431,13 +431,14 @@ Array OSCMessage::_parseArguments(PackedByteArray theBytes) {
             myArguments[myTagIndex] = data.to_float32_array()[0];
             myIndex += 4;
         } else if (t == 0x73) { // 's'.to_ascii_buffer()[0]: // String
-            myArguments[myTagIndex] = theBytes.slice(myIndex).get_string_from_utf8();
-            int newIndex = myIndex + myArguments[myTagIndex].size();
+            String s = theBytes.slice(myIndex).get_string_from_utf8();
+            myArguments[myTagIndex] = s;
+            int newIndex = myIndex + s.length();
             myIndex = newIndex + _align(newIndex);
         } else if (t == 0x62) { // 'b'.to_ascii_buffer()[0]: // Blob
-            int myLen = theBytes.slice(myIndex, myIndex + 4);
-            myLen.reverse();
-            myLen = myLen.to_int32_array()[0];
+            PackedByteArray data = theBytes.slice(myIndex, myIndex + 4);
+            data.reverse();
+            int myLen = data.to_int32_array()[0];
             myIndex += 4;
             myArguments[myTagIndex] = theBytes.slice(myIndex, myIndex + myLen);
             myIndex += myLen + (_align(myLen) % 4);

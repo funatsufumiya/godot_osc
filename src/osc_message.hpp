@@ -213,9 +213,9 @@ namespace godot {
 
 class OSC;
 
-class OSCMessage
+class OSCMessage : public Object
 {
-    // GDCLASS(OSCMessage, Node);
+    GDCLASS(OSCMessage, Object);
     
 protected:
     static void _bind_methods();
