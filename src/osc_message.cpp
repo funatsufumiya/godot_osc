@@ -205,6 +205,7 @@
 #include <godot_cpp/core/class_db.hpp>
 
 #include "osc_message.hpp"
+#include "osc.hpp"
 
 using namespace godot;
 
@@ -292,7 +293,7 @@ int OSCMessage::padSize(int bytes) {
 PackedByteArray OSCMessage::toPackedByteArray() {
     PackedByteArray output;
     int addrPad = padSize(_myAddrPattern.length() + 1);
-    output.append_array(_myAddrPattern.to_utf8());
+    output.append_array(_myAddrPattern.to_utf8_buffer());
     output.append(0x00);
     while (addrPad > 0) {
         output.append(0x00);
@@ -308,38 +309,40 @@ PackedByteArray OSCMessage::toPackedByteArray() {
         typePad -= 1;
     }
     for (int i = 0; i < _myArguments.size(); i++) {
-        switch (_myTypetag[i]) {
-            case 0x69: // 'i'.to_ascii_buffer()[0]: // Interger
-                PackedByteArray data;
-                data.resize(4);
-                data.encode_s32(0, _myArguments[i]);
-                data.reverse();
-                output.append_array(data);
-                break;
-            case 0x66: // 'f'.to_ascii_buffer()[0]: // Float
-                PackedByteArray data;
-                data.resize(4);
-                data.encode_float(0, _myArguments[i]);
-                data.reverse();
-                output.append_array(data);
-                break;
-            case 0x73: // 's'.to_ascii_buffer()[0]: // String
-                output.append_array(_myArguments[i].to_utf8());
+        Variant v = _myTypetag[i];
+        char t = (uint8_t)v;
+        if (t == 0x69) { // 'i'.to_ascii_buffer()[0]: // Interger
+            PackedByteArray data;
+            data.resize(4);
+            data.encode_s32(0, _myArguments[i]);
+            data.reverse();
+            output.append_array(data);
+        } else if (t == 0x66) { // 'f'.to_ascii_buffer()[0]: // Float
+            PackedByteArray data;
+            data.resize(4);
+            data.encode_float(0, _myArguments[i]);
+            data.reverse();
+            output.append_array(data);
+        } else if (t == 0x73) { // 's'.to_ascii_buffer()[0]: // String
+            String s = (String)_myArguments[i];
+            output.append_array(s.to_utf8_buffer());
+            output.append(0x00);
+            int dataPad = padSize(s.length() + 1);
+            while (dataPad > 0) {
                 output.append(0x00);
-                int dataPad = padSize(_myArguments[i].length() + 1);
-                while (dataPad > 0) {
-                    output.append(0x00);
-                    dataPad -= 1;
-                }
-                break;
-            case 0x62: // 'b'.to_ascii_buffer()[0]: // Blob
-                output.append_array(_myArguments[i]);
-                int dataPad = padSize(_myArguments[i].length());
-                while (dataPad > 0) {
-                    output.append(0x00);
-                    dataPad -= 1;
-                }
-                break;
+                dataPad -= 1;
+            }
+        } else if (t == 0x62) { // 'b'.to_ascii_buffer()[0]: // Blob
+            // FIXME: is this the right type for blob?
+            // String b = (String)_myArguments[i];
+            PackedByteArray b = (PackedByteArray)_myArguments[i];
+            output.append_array(b);
+            // int dataPad = padSize(b.length());
+            int dataPad = padSize(b.size());
+            while (dataPad > 0) {
+                output.append(0x00);
+                dataPad -= 1;
+            }
         }
     }
     return output;

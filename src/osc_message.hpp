@@ -207,7 +207,11 @@
 // #include <godot_cpp/classes/packed_byte_array.hpp>
 // #include <godot_cpp/core/class_db.hpp>
 
+// #include "osc.hpp"
+
 namespace godot {
+
+class OSC;
 
 class OSCMessage
 {
@@ -218,9 +222,11 @@ protected:
 
 public:
     
+    Variant _myAddrInt = -1;
     String _myAddrPattern = "";
-    String _myTypetag = "";
+    Array _myTypetag;
     Array _myArguments;
+    Array _myData;
     bool _isValid = false;
 
     OSCMessage();
@@ -236,7 +242,7 @@ public:
     OSCMessage* add(Variant value);
     int padSize(int bytes);
     PackedByteArray toPackedByteArray();
-    OSCMessage* send(OSCMessage* sender);
+    OSCMessage* send(OSC* sender);
     String toString();
     // void _init(Variant value);
     void init(Variant value);

@@ -1,7 +1,9 @@
 #include "osc.hpp"
+#include "osc_message.hpp"
 
 #include <godot_cpp/variant/utility_functions.hpp>
-// #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/classes/packet_peer_udp.hpp>
+#include <godot_cpp/core/class_db.hpp>
 
 using namespace godot;
 
@@ -73,7 +75,7 @@ void OSC::_ready() {
 void OSC::_process(double delta) {
     server->poll(); // Important!
     if (server->is_connection_available()) {
-        PacketPeerUDP* peer = server->take_connection();
+        Ref<PacketPeerUDP> peer = server->take_connection();
         PackedByteArray packet = peer->get_packet();
         // OSCMessage msg(packet);
         std::shared_ptr msg = std::make_shared<OSCMessage>();
