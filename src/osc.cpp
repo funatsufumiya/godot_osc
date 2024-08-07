@@ -83,7 +83,7 @@ void OSC::_process(double delta) {
             Array arr = messageHandlers[msg->address()];
 
             for (int i = 0; i < arr.size(); i++) {
-                // UtilityFunctions::print("Calling handler in address: " + msg->address());
+                // UtilityFunctions::print("Calling handler (hash " + String::num(handler.hash()) + ") in address: " + msg->address());
                 Callable handler = arr[i];
                 handler.call(msg.get());
             }
@@ -107,4 +107,6 @@ void OSC::onMessage(String address, Callable callback) {
         messageHandlers[address] = Array();
     }
     ((Array)messageHandlers[address]).push_back(callback);
+
+    // UtilityFunctions::print("OSC::onMessage: callback (hash " + String::num(callback.hash()) + ") added to address: " + address);
 }
