@@ -29,6 +29,34 @@ func _process(delta):
 
 see [`project/`](project) and [`osc_receiver.gd`](project/osc_receiver.gd) for example usage.
 
+## Install
+
+- create a `addons` folder in your godot project
+- place `osc.gdextension` below:
+
+    ```text
+    [configuration]
+
+    entry_symbol = "gdextension_init"
+    compatibility_minimum = 4.2
+
+    [libraries]
+
+    macos.debug = "bin/libosc.macos.debug.framework"
+    macos.release = "bin/libosc.macos.release.framework"
+    windows.debug.x86_64 = "bin/libosc.windows.debug.x86_64.dll"
+    windows.release.x86_64 = "bin/libosc.windows.release.x86_64.dll"
+    linux.debug.x86_64 = "bin/libosc.linux.debug.x86_64.so"
+    linux.release.x86_64 = "bin/libosc.linux.release.x86_64.so"
+    linux.debug.arm64 = "bin/libosc.linux.debug.arm64.so"
+    linux.release.arm64 = "bin/libosc.linux.release.arm64.so"
+    linux.debug.rv64 = "bin/libosc.linux.debug.rv64.so"
+    linux.release.rv64 = "bin/libosc.linux.release.rv64.so"
+    ```
+
+- create a `bin` folder in your godot project
+- place dlls from [Releases](releases) into `bin` folder
+
 ## Build and Run
 
 - `git submodule update --init --recursive --recommend-shallow --depth 1`
