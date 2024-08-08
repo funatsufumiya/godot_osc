@@ -6,6 +6,7 @@
 using namespace godot;
 
 void OSCMessage::_bind_methods() {
+    ClassDB::bind_static_method("OSCMessage", D_METHOD("new_from", "value"), &OSCMessage::new_from);
     ClassDB::bind_method(D_METHOD("init", "value"), &OSCMessage::init);
     ClassDB::bind_method(D_METHOD("send", "sender"), &OSCMessage::send);
     ClassDB::bind_method(D_METHOD("toPackedByteArray"), &OSCMessage::toPackedByteArray);
@@ -145,7 +146,7 @@ PackedByteArray OSCMessage::toPackedByteArray() {
 }
 
 OSCMessage* OSCMessage::send(OSC* sender) {
-    sender->send(toPackedByteArray());
+    sender->sendBuffer(toPackedByteArray());
     return this;
 }
 

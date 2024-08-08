@@ -14,9 +14,13 @@ func _ready():
 	add_child(osc)
 
 	# Message input Handler 
-	osc.onMessage("/test", func(msg:OSCMessage):
+	# osc.onMessage("/test", func(msg:OSCMessage):
+	osc.onMessage("/test", func(addr: String, args: Array):
 		print("[OSC] /test")
-		print(msg.toString())
+		# print(msg.toString())
+		print("Address: ", addr)
+		print("Args: ", args)
+
 		# match msg.getValues() :
 		# 	[var x, var y] when x is float and y is float:
 		# 		# print("X: ", x, ", Y: ", y)
@@ -28,15 +32,16 @@ func _ready():
 		# 			mover.osc_move_message_received.emit(x, y)
 	)
 
-	osc.onMessage("/hello", func(msg:OSCMessage):
+	# osc.onMessage("/hello", func(msg:OSCMessage):
+	osc.onMessage("/hello", func(addr: String, args: Array):
 		print("[OSC] /hello")
-		print(msg.toString())
+		# print(msg.toString())
+		print("Address: ", addr)
+		print("Args: ", args)
 	)
 
 	# Message output
-	# var msg:OSCMessage = OSCMessage.new("/address")
-	# msg.add(123).send(osc)
-	# self.target_server = _osc_server
+	osc.send("/address", [123])
 
 func _exit_tree():
 	osc.stop()

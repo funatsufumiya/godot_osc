@@ -32,7 +32,8 @@ public:
     void _ready() override;
     void _process(double delta) override;
 
-    void send(PackedByteArray buffer);
+    void sendBuffer(PackedByteArray buffer);
+    void send(String address, Array arguments);
     void stop();
     void onMessage(String address, Callable callback);
 };

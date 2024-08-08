@@ -12,7 +12,8 @@ void OSC::_bind_methods() {
     // ClassDB::bind_static_method("OSC", D_METHOD("create", "inPort", "outPort", "outIP"), &OSC::create);
     ClassDB::bind_static_method("OSC", D_METHOD("new_from", "inPort", "outPort", "outIP"), &OSC::new_from);
     ClassDB::bind_method(D_METHOD("init", "inPort", "outPort", "outIP"), &OSC::init);
-    ClassDB::bind_method(D_METHOD("send", "buffer"), &OSC::send);
+    ClassDB::bind_method(D_METHOD("sendBuffer", "buffer"), &OSC::sendBuffer);
+    ClassDB::bind_method(D_METHOD("send", "address", "arguments"), &OSC::send);
     ClassDB::bind_method(D_METHOD("stop"), &OSC::stop);
     ClassDB::bind_method(D_METHOD("onMessage", "address", "callback"), &OSC::onMessage);
 }
@@ -76,7 +77,10 @@ void OSC::_process(double delta) {
             for (int i = 0; i < arr.size(); i++) {
                 // UtilityFunctions::print("Calling handler in *");
                 Callable handler = arr[i];
-                handler.call(msg.get());
+                // handler.call(msg.get());
+                // handler.call("call", msg.get());
+                // handler.call();
+                handler.call(msg->address(), msg->getValues());
             }
         }
         if (messageHandlers.has(msg->address())) {
@@ -85,14 +89,33 @@ void OSC::_process(double delta) {
             for (int i = 0; i < arr.size(); i++) {
                 // UtilityFunctions::print("Calling handler (hash " + String::num(handler.hash()) + ") in address: " + msg->address());
                 Callable handler = arr[i];
-                handler.call(msg.get());
+                // handler.call(msg.get());
+                // handler.call("call", msg.get());
+                // handler.call();
+                handler.call(msg->address(), msg->getValues());
             }
         }
     }
 }
 
-void OSC::send(PackedByteArray buffer) {
+void OSC::sendBuffer(PackedByteArray buffer) {
+    // UtilityFunctions::print("OSC::sendBuffer");
+
+    Ref<PacketPeerUDP> udp = memnew(PacketPeerUDP);
+    udp->connect_to_host(_outIP, _outPort);
+    udp->put_packet(buffer);
+    // UtilityFunctions::print("OSC UDP packet sent to " + _outIP + ":" + String::num_int64(_outPort));
+}
+
+void OSC::send(String address, Array arguments) {
     // UtilityFunctions::print("OSC::send");
+
+    OSCMessage msg;
+    msg.init(address);
+    for (int i = 0; i < arguments.size(); i++) {
+        msg.add(arguments[i]);
+    }
+    sendBuffer(msg.toPackedByteArray());
 }
 
 void OSC::stop() {
