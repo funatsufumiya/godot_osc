@@ -5,7 +5,7 @@ OSC addon for Godot 4.2.2
 ## Usage
 
 ```gdscript
-@onready var osc:OSC = OSC.new_from(12345, 12346, "127.0.0.1")
+@onready var osc:OSC = OSC.new_from(12345, 12346, "0.0.0.0") # port_in, port_out, ip
 
 func _ready():
 	add_child(osc)
