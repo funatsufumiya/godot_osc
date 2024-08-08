@@ -1,7 +1,5 @@
 # godot_osc
 
-***WIP***
-
 OSC addon for Godot 4.2.2
 
 ## Usage
