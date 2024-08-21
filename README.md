@@ -31,6 +31,8 @@ see [`project/`](project) and [`osc_receiver.gd`](project/osc_receiver.gd) for e
 
 ## Install
 
+NOTE: [godot_osc_bin](https://github.com/funatsufumiya/godot_osc_bin) makes installation even easier.
+
 - create a `addons` folder in your godot project
 - place `osc.gdextension` below:
 
