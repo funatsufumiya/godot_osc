@@ -57,7 +57,7 @@ NOTE: [godot_osc_bin](https://github.com/funatsufumiya/godot_osc_bin) makes inst
     ```
 
 - create a `bin` folder in your godot project
-- place dlls from [Releases](releases) into `bin` folder
+- place dlls from [Releases](https://github.com/funatsufumiya/godot_osc/releases) into `bin` folder
 
 ## Build and Run
 
