@@ -61,7 +61,7 @@ NOTE: [godot_osc_bin](https://github.com/funatsufumiya/godot_osc_bin) makes inst
 
 ## Build and Run
 
-(This process is needed if you build this plugin by your own)
+(This process is needed only if you build this plugin by your own)
 
 ```bash
 $ git submodule update --init --recursive --recommend-shallow --depth 1
