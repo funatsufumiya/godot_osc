@@ -5,6 +5,8 @@
 #include <godot_cpp/classes/packet_peer_udp.hpp>
 #include <godot_cpp/core/class_db.hpp>
 
+#include <memory>
+
 using namespace godot;
 
 void OSC::_bind_methods() {
