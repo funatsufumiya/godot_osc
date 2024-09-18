@@ -29,8 +29,10 @@ public:
     // void _init(int inPort, int outPort, String outIP);
     static OSC* new_from(int inPort, int outPort, String outIP);
     void init(int inPort, int outPort, String outIP);
+    void set_max_pending_connections(int p_max_pending_connections);
     void _ready() override;
     void _process(double delta) override;
+    void _process_packet(PackedByteArray packet);
 
     void sendBuffer(PackedByteArray buffer);
     void send(String address, Array arguments);

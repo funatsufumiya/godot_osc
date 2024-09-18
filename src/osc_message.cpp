@@ -215,6 +215,7 @@ TypedArray<PackedByteArray> OSCMessage::_parseMessage(PackedByteArray theBytes) 
         // UtilityFunctions::print(theBytes.slice(myIndex, myIndex + myLen));
 
         int idx = _parseAddrPattern(theBytes.slice(myIndex, myIndex + myLen), myLen, 0);
+        // UtilityFunctions::print("[debug] OSC bundle message address: " + _myAddrPattern);
         myIndex += idx;
 
         bundle_first_message_end_index = myIndex + myLen;
@@ -242,6 +243,8 @@ TypedArray<PackedByteArray> OSCMessage::_parseMessage(PackedByteArray theBytes) 
             myIndex += myLen;
         }
 
+        // UtilityFunctions::print("[debug] OSC bundle rest message num " + String::num(rest_messages.size()));
+        
         return rest_messages;
     } else {
         return TypedArray<PackedByteArray>();
