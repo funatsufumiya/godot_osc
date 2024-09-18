@@ -62,39 +62,57 @@ void OSC::_process(double delta) {
 
         // UtilityFunctions::print("[debug] OSC packet received: " + packet.get_string_from_utf8());
 
+        std::vector<std::shared_ptr<OSCMessage>> all_messages;
+
         std::shared_ptr<OSCMessage> msg = std::make_shared<OSCMessage>();
-        msg->init(packet);
+        TypedArray<PackedByteArray> rest_messages = msg->_parseMessage(packet);
+        all_messages.push_back(msg);
 
-        // UtilityFunctions::print("OSC message received: " + msg->address());
-        // UtilityFunctions::print("OSC message content: " + msg->toString());
-        
-        if (!msg->isValid()) {
-            // UtilityFunctions::print("[debug] OSC message is invalid");
-            return;
+        for (int i = 0; i < rest_messages.size(); i++) {
+            std::shared_ptr<OSCMessage> msg = std::make_shared<OSCMessage>();
+            msg->_parseMessage(rest_messages[i]);
+            all_messages.push_back(msg);
         }
-        if (messageHandlers.has("*")) {
-            Array empty = Array();
-            Array arr = messageHandlers.get("*", empty);
 
-            for (int i = 0; i < arr.size(); i++) {
-                // UtilityFunctions::print("Calling handler in *");
-                Callable handler = arr[i];
-                // handler.call(msg.get());
-                // handler.call("call", msg.get());
-                // handler.call();
-                handler.call(msg->address(), msg->getValues());
+        for (int i = 0; i < all_messages.size(); i++) {
+            std::shared_ptr<OSCMessage> msg = all_messages[i];
+
+            // UtilityFunctions::print("OSC message received: " + msg->address());
+            // String typeTags = "";
+            // for (int j = 0; j < msg->_myTypetag.size(); j++) {
+            //     typeTags += String::chr(msg->_myTypetag[j]);
+            // }
+            // UtilityFunctions::print("OSC message type tags: " + typeTags);
+            // UtilityFunctions::print("OSC message content: " + msg->toString());
+            
+            if (!msg->isValid()) {
+                // UtilityFunctions::print("[debug] OSC message is invalid");
+                return;
             }
-        }
-        if (messageHandlers.has(msg->address())) {
-            Array arr = messageHandlers[msg->address()];
+            if (messageHandlers.has("*")) {
+                Array empty = Array();
+                Array arr = messageHandlers.get("*", empty);
 
-            for (int i = 0; i < arr.size(); i++) {
-                // UtilityFunctions::print("Calling handler (hash " + String::num(handler.hash()) + ") in address: " + msg->address());
-                Callable handler = arr[i];
-                // handler.call(msg.get());
-                // handler.call("call", msg.get());
-                // handler.call();
-                handler.call(msg->address(), msg->getValues());
+                for (int i = 0; i < arr.size(); i++) {
+                    // UtilityFunctions::print("Calling handler in *");
+                    Callable handler = arr[i];
+                    // handler.call(msg.get());
+                    // handler.call("call", msg.get());
+                    // handler.call();
+                    handler.call(msg->address(), msg->getValues());
+                }
+            }
+            if (messageHandlers.has(msg->address())) {
+                Array arr = messageHandlers[msg->address()];
+
+                for (int i = 0; i < arr.size(); i++) {
+                    // UtilityFunctions::print("Calling handler (hash " + String::num(handler.hash()) + ") in address: " + msg->address());
+                    Callable handler = arr[i];
+                    // handler.call(msg.get());
+                    // handler.call("call", msg.get());
+                    // handler.call();
+                    handler.call(msg->address(), msg->getValues());
+                }
             }
         }
     }

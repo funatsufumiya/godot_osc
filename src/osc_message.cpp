@@ -1,5 +1,7 @@
 #include <godot_cpp/core/class_db.hpp>
 
+#include <godot_cpp/variant/utility_functions.hpp>
+
 #include "osc_message.hpp"
 #include "osc.hpp"
 
@@ -15,11 +17,11 @@ void OSCMessage::_bind_methods() {
     ClassDB::bind_method(D_METHOD("getValues"), &OSCMessage::getValues);
     ClassDB::bind_method(D_METHOD("add", "value"), &OSCMessage::add);
     ClassDB::bind_method(D_METHOD("padSize", "bytes"), &OSCMessage::padSize);
-    ClassDB::bind_method(D_METHOD("_parseMessage", "theBytes"), &OSCMessage::_parseMessage);
-    ClassDB::bind_method(D_METHOD("_parseAddrPattern", "theBytes", "theLength", "theIndex"), &OSCMessage::_parseAddrPattern);
-    ClassDB::bind_method(D_METHOD("_parseTypetag", "theBytes", "theLength", "theIndex"), &OSCMessage::_parseTypetag);
-    ClassDB::bind_method(D_METHOD("_parseArguments", "theBytes"), &OSCMessage::_parseArguments);
-    ClassDB::bind_method(D_METHOD("_align", "theInt"), &OSCMessage::_align);
+    // ClassDB::bind_method(D_METHOD("_parseMessage", "theBytes"), &OSCMessage::_parseMessage);
+    // ClassDB::bind_method(D_METHOD("_parseAddrPattern", "theBytes", "theLength", "theIndex"), &OSCMessage::_parseAddrPattern);
+    // ClassDB::bind_method(D_METHOD("_parseTypetag", "theBytes", "theLength", "theIndex"), &OSCMessage::_parseTypetag);
+    // ClassDB::bind_method(D_METHOD("_parseArguments", "theBytes"), &OSCMessage::_parseArguments);
+    // ClassDB::bind_method(D_METHOD("_align", "theInt"), &OSCMessage::_align);
 }
 
 OSCMessage::OSCMessage()
@@ -169,10 +171,55 @@ String OSCMessage::toString() {
     return this->address() + " " + data;
 }
 
-void OSCMessage::_parseMessage(PackedByteArray theBytes) {
+TypedArray<PackedByteArray> OSCMessage::_parseMessage(PackedByteArray theBytes) {
     int myLength = theBytes.size();
     int myIndex = 0;
     myIndex = _parseAddrPattern(theBytes, myLength, myIndex);
+
+    bool is_bundle = false;
+    // PackedByteArray bundle_timetag;
+    TypedArray<PackedByteArray> rest_messages;
+
+    int bundle_first_message_end_index = -1;
+
+    if (_myAddrPattern == "#bundle") {
+        is_bundle = true;
+
+        // NOTE: only parse first message in bundle. The rest will be returned as is
+
+//         Parts of an OSC Bundle
+// Data	Size	Purpose
+// OSC-string “#bundle”	8 bytes	How to know that this data is a bundle
+// OSC-timetag	8 bytes	Time tag that applies to the entire bundle
+// Size of first bundle element	int32 = 4 bytes	
+// First bundle element’s contents	As many bytes as given by “size of first bundle element”	First bundle element
+// Size of second bundle element	int32 = 4 bytes	
+// Second bundle element’s contents	As many bytes as given by “size of second bundle element”	Second bundle element
+// etc.		Addtional bundle elements
+        
+        // UtilityFunctions::print("[debug] OSC bundle received");
+        // UtilityFunctions::print("[debug] theBytes: ");
+        // UtilityFunctions::print(theBytes);
+
+        // skip the timetag
+        // bundle_timetag = theBytes.slice(myIndex, myIndex + 8);
+        myIndex += 8;
+        // skip the size of the first bundle element
+        PackedByteArray data = theBytes.slice(myIndex, myIndex + 4);
+        data.reverse();
+        int myLen = data.to_int32_array()[0];
+        myIndex += 4;
+
+        // UtilityFunctions::print("[debug] OSC bundle message length: " + String::num(myLen));
+        // UtilityFunctions::print("[debug] OSC bundle data: ");
+        // UtilityFunctions::print(theBytes.slice(myIndex, myIndex + myLen));
+
+        int idx = _parseAddrPattern(theBytes.slice(myIndex, myIndex + myLen), myLen, 0);
+        myIndex += idx;
+
+        bundle_first_message_end_index = myIndex + myLen;
+    }
+
     if (myIndex != -1) {
         myIndex = _parseTypetag(theBytes, myLength, myIndex);
     }
@@ -181,9 +228,33 @@ void OSCMessage::_parseMessage(PackedByteArray theBytes) {
         _myArguments = _parseArguments(_myData);
         _isValid = true;
     }
+
+    if (is_bundle) {
+        // skip size of the rest of the bundle elements
+        TypedArray<PackedByteArray> rest_messages = TypedArray<PackedByteArray>();
+        myIndex = bundle_first_message_end_index;
+        while (myIndex < myLength) {
+            PackedByteArray data = theBytes.slice(myIndex, myIndex + 4);
+            data.reverse();
+            int myLen = data.to_int32_array()[0];
+            myIndex += 4;
+            rest_messages.push_back(theBytes.slice(myIndex, myIndex + myLen));
+            myIndex += myLen;
+        }
+
+        return rest_messages;
+    } else {
+        return TypedArray<PackedByteArray>();
+    }
 }
 
 int OSCMessage::_parseAddrPattern(PackedByteArray theBytes, int theLength, int theIndex) {
+    // when if #bundle\0
+    if (theLength > 7 && theBytes[0] == 0x23 && theBytes[1] == 0x62 && theBytes[2] == 0x75 && theBytes[3] == 0x6e && theBytes[4] == 0x64 && theBytes[5] == 0x6c && theBytes[6] == 0x65 && theBytes[7] == 0x00) {
+        _myAddrPattern = "#bundle";
+        return 8;
+    }
+
     if (theLength > 4 && theBytes[4] == 0x2c) {
         _myAddrInt = theBytes.slice(0, 4).to_int32_array();
     }

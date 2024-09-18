@@ -249,7 +249,8 @@ public:
     String toString();
     // void _init(Variant value);
     void init(Variant value);
-    void _parseMessage(PackedByteArray theBytes);
+    // NOTE: returns unparsed bytes (ex: osc bundle's remaining messages)
+    TypedArray<PackedByteArray> _parseMessage(PackedByteArray theBytes);
     int _parseAddrPattern(PackedByteArray theBytes, int theLength, int theIndex);
     int _parseTypetag(PackedByteArray theBytes, int theLength, int theIndex);
     Array _parseArguments(PackedByteArray theBytes);
