@@ -1,6 +1,6 @@
 # godot_osc
 
-OSC addon for Godot 4.2.2 - 4.3
+OSC addon for Godot 4.2.2 - 4.4
 
 ## Usage
 
